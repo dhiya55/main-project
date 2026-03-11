@@ -1,0 +1,80 @@
+{% extends 'tracker/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<header class="py-5 overflow-hidden">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <h1 class="display-3 fw-bold mb-4">Track Your <span class="text-primary">Eco-Footprint</span> with
+                    Precision.</h1>
+                <p class="lead text-muted mb-5">EcoTrack Vision helps you monitor plastic, water, and electricity
+                    consumption to build a more sustainable future for everyone.</p>
+
+            </div>
+            <div class="col-lg-6">
+                <div class="position-relative">
+                    <div class="bg-success opacity-10 position-absolute rounded-circle"
+                        style="width: 500px; height: 500px; top: -50px; right: -50px; z-index: -1;"></div>
+                    <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                        alt="Sustainability" class="img-fluid rounded-5 shadow-lg">
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Stats/Weights Section -->
+<section class="py-5 bg-white">
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">How Your Score is Calculated</h2>
+            <p class="text-muted">A weighted assessment focusing on the most critical impact factors.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card p-4 text-center border-0 bg-light h-100">
+                    <div class="icon-box-lg bg-success text-white mx-auto mb-4">
+                        <i class="fas fa-recycle fa-2x"></i>
+                    </div>
+                    <h4>Plastic Impact</h4>
+                    <p class="text-muted">High priority due to long-term environmental persistence.</p>
+                    <div class="h2 fw-bold text-success">40%</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-4 text-center border-0 bg-light h-100">
+                    <div class="icon-box-lg bg-info text-white mx-auto mb-4">
+                        <i class="fas fa-tint fa-2x"></i>
+                    </div>
+                    <h4>Water Usage</h4>
+                    <p class="text-muted">Promoting responsible consumption of our most vital resource.</p>
+                    <div class="h2 fw-bold text-info">30%</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-4 text-center border-0 bg-light h-100">
+                    <div class="icon-box-lg bg-warning text-white mx-auto mb-4">
+                        <i class="fas fa-bolt fa-2x"></i>
+                    </div>
+                    <h4>Electricity</h4>
+                    <p class="text-muted">Encouraging energy efficiency in every household.</p>
+                    <div class="h2 fw-bold text-warning">30%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .icon-box-lg {
+        width: 80px;
+        height: 80px;
+        border-radius: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+{% endblock %}

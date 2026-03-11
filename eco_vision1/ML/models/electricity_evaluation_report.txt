@@ -1,0 +1,11 @@
+EcoTrack Vision - Electricity Consumption Report
+Generated: 2026-02-24 14:52:53.419671
+==================================================
+Dataset: /Users/dhiya/Downloads/eco_vision/ML/household_electricity_consumption.csv
+Best Model: Gradient Boosting
+Best R2: 0.8660
+
+Algorithm                   MAE       RMSE         R2
+Linear Regression          0.78       1.00     0.8078
+Random Forest              0.75       0.96     0.8253
+Gradient Boosting          0.67       0.84     0.8660

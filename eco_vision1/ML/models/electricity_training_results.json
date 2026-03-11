@@ -1,0 +1,40 @@
+{
+    "best_model": "Gradient Boosting",
+    "best_r2": 0.866,
+    "features": [
+        "household_size",
+        "income_level",
+        "property_type",
+        "dwelling_area_sqm",
+        "num_occupants_work_from_home",
+        "has_air_conditioner",
+        "has_electric_heating",
+        "has_ev",
+        "num_major_appliances",
+        "temperature_c",
+        "electricity_price_per_kwh"
+    ],
+    "target": "daily_consumption_kwh",
+    "dataset": "household_electricity_consumption.csv",
+    "results": {
+        "Linear Regression": {
+            "mae": 0.78,
+            "rmse": 1.0,
+            "r2": 0.8078,
+            "cv_r2": 0.8112
+        },
+        "Random Forest": {
+            "mae": 0.75,
+            "rmse": 0.96,
+            "r2": 0.8253,
+            "cv_r2": 0.826
+        },
+        "Gradient Boosting": {
+            "mae": 0.67,
+            "rmse": 0.84,
+            "r2": 0.866,
+            "cv_r2": 0.8689
+        }
+    },
+    "timestamp": "2026-02-24T14:52:53.419164"
+}

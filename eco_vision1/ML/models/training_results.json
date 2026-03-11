@@ -1,0 +1,40 @@
+{
+    "best_model": "Linear Regression",
+    "best_r2": 0.9324,
+    "features": [
+        "household_size",
+        "income_level",
+        "property_type",
+        "dwelling_area_sqm",
+        "has_garden",
+        "num_bathrooms",
+        "has_dishwasher",
+        "has_washing_machine",
+        "occupants_children",
+        "water_price_per_m3",
+        "temperature_c"
+    ],
+    "target": "daily_consumption_liters",
+    "dataset": "household_water_consumption_extended.csv",
+    "results": {
+        "Linear Regression": {
+            "mae": 14.53,
+            "rmse": 18.2,
+            "r2": 0.9324,
+            "cv_r2": 0.9331
+        },
+        "Random Forest": {
+            "mae": 16.42,
+            "rmse": 20.56,
+            "r2": 0.9138,
+            "cv_r2": 0.9145
+        },
+        "Gradient Boosting": {
+            "mae": 14.93,
+            "rmse": 18.68,
+            "r2": 0.9289,
+            "cv_r2": 0.9292
+        }
+    },
+    "timestamp": "2026-02-24T15:14:22.912901"
+}

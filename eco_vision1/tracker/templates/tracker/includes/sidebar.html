@@ -1,0 +1,60 @@
+<div class="sidebar shadow-sm">
+    <h5 class="mb-4">Hello, {{ user.username }}!</h5>
+    <a href="{% url 'dashboard' %}"
+        class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+        <i class="fas fa-chart-line"></i> Dashboard
+    </a>
+
+    {% if user.is_superuser %}
+    <!-- Admin Management Links -->
+    <a href="{% url 'admin_users' %}"
+        class="sidebar-link {% if request.resolver_match.url_name == 'admin_users' %}active{% endif %}">
+        <i class="fas fa-users"></i> Total Users
+    </a>
+    <a href="{% url 'plastic_history' %}"
+        class="sidebar-link {% if request.resolver_match.url_name == 'plastic_history' %}active{% endif %}">
+        <i class="fas fa-history"></i> Global Plastic Hist.
+    </a>
+    <a href="{% url 'water_forecast_history' %}"
+        class="sidebar-link {% if request.resolver_match.url_name == 'water_forecast_history' %}active{% endif %}">
+        <i class="fas fa-list-check"></i> Global Water Hist.
+    </a>
+    <a href="{% url 'electricity_forecast_history' %}"
+        class="sidebar-link {% if request.resolver_match.url_name == 'electricity_forecast_history' %}active{% endif %}">
+        <i class="fas fa-list-check"></i> Global Elec. Hist.
+    </a>
+    {% else %}
+    <!-- Regular User Links -->
+    <a href="{% url 'plastic_upload' %}"
+        class="sidebar-link {% if request.resolver_match.url_name == 'plastic_upload' %}active{% endif %}">
+        <i class="fas fa-recycle"></i> Plastic ID <span class="badge bg-success ms-auto small">AI</span>
+    </a>
+    <a href="{% url 'plastic_history' %}"
+        class="sidebar-link {% if request.resolver_match.url_name == 'plastic_history' %}active{% endif %}">
+        <i class="fas fa-history"></i> Plastic History
+    </a>
+    <a href="{% url 'water_forecast' %}"
+        class="sidebar-link {% if request.resolver_match.url_name == 'water_forecast' %}active{% endif %}">
+        <i class="fas fa-brain"></i> Water Forecast <span class="badge bg-success ms-auto small">AI</span>
+    </a>
+    <a href="{% url 'water_forecast_history' %}"
+        class="sidebar-link {% if request.resolver_match.url_name == 'water_forecast_history' %}active{% endif %}">
+        <i class="fas fa-list-check"></i> Water Hist.
+    </a>
+    <a href="{% url 'electricity_forecast' %}"
+        class="sidebar-link {% if request.resolver_match.url_name == 'electricity_forecast' %}active{% endif %}">
+        <i class="fas fa-plug-circle-bolt"></i> Electricity Forecast <span
+            class="badge bg-warning text-dark ms-auto small">AI</span>
+    </a>
+    <a href="{% url 'electricity_forecast_history' %}"
+        class="sidebar-link {% if request.resolver_match.url_name == 'electricity_forecast_history' %}active{% endif %}">
+        <i class="fas fa-list-check"></i> Elec. Hist.
+    </a>
+    <a href="{% url 'profile' %}"
+        class="sidebar-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+        <i class="fas fa-user-cog"></i> Profile Settings
+    </a>
+    {% endif %}
+
+
+</div>
