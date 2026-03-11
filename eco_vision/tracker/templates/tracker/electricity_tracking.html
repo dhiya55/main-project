@@ -1,0 +1,106 @@
+{% extends 'tracker/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Electricity Tracker - EcoTrack Vision{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-lg-3 col-md-4 mb-4">
+            {% include 'tracker/includes/sidebar.html' %}
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9 col-md-8">
+            <div class="row">
+                <div class="col-lg-5 mb-4">
+                    <div class="card p-4">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="icon-box bg-light-warning text-warning me-3">
+                                <i class="fas fa-bolt fa-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-0">Log Electricity</h4>
+                                <p class="small text-muted mb-0">Record units or kWh</p>
+                            </div>
+                        </div>
+
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label class="form-label">Units (kWh)</label>
+                                <input type="number" name="units" class="form-control form-control-lg rounded-3"
+                                    placeholder="e.g. 5.2">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Date</label>
+                                <input type="date" name="date" class="form-control form-control-lg rounded-3">
+                            </div>
+                            <div class="d-grid mt-4">
+                                <button type="submit" class="btn btn-premium btn-lg">Save Analytics</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-lg-7">
+                    <div class="card p-4 h-100">
+                        <h5 class="mb-4">Energy Consumption Analytics</h5>
+                        <canvas id="energyChart" height="250"></canvas>
+
+                        <div class="mt-4 p-3 bg-light rounded-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-info-circle text-info me-3"></i>
+                                <div>
+                                    <h6 class="mb-0">Energy Saver Tip</h6>
+                                    <p class="small text-muted mb-0">Unplugging devices when not in use can save up to
+                                        10% on your bill.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-box {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .bg-light-warning {
+        background-color: rgba(255, 193, 7, 0.1);
+    }
+</style>
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('energyChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+                label: 'Electricity (kWh)',
+                data: [4.5, 5.2, 4.8, 6.1, 5.5, 7.2, 6.8],
+                backgroundColor: '#f1c40f',
+                borderRadius: 8
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}

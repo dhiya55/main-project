@@ -1,0 +1,36 @@
+<div class="sidebar shadow-sm">
+    <h5 class="mb-4">Hello, {{ user.username }}!</h5>
+    <a href="{% url 'dashboard' %}"
+        class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+        <i class="fas fa-chart-line"></i> Dashboard
+    </a>
+    <a href="{% url 'plastic_upload' %}"
+        class="sidebar-link {% if request.resolver_match.url_name == 'plastic_upload' %}active{% endif %}">
+        <i class="fas fa-recycle"></i> Plastic ID
+    </a>
+	<!-- 
+    <a href="{% url 'water_tracking' %}"
+        class="sidebar-link {% if request.resolver_match.url_name == 'water_tracking' %}active{% endif %}">
+        <i class="fas fa-tint"></i> Water Tracker
+    </a>
+	-->
+    <a href="{% url 'water_forecast' %}"
+        class="sidebar-link {% if request.resolver_match.url_name == 'water_forecast' %}active{% endif %}">
+        <i class="fas fa-brain"></i> Water Forecast <span class="badge bg-success ms-auto small">AI</span>
+    </a>
+	<!-- 
+    <a href="{% url 'electricity_tracking' %}"
+        class="sidebar-link {% if request.resolver_match.url_name == 'electricity_tracking' %}active{% endif %}">
+        <i class="fas fa-bolt"></i> Electricity Tracker
+    </a>
+	-->
+    <a href="{% url 'electricity_forecast' %}"
+        class="sidebar-link {% if request.resolver_match.url_name == 'electricity_forecast' %}active{% endif %}">
+        <i class="fas fa-plug-circle-bolt"></i> Electricity Forecast <span
+            class="badge bg-warning text-dark ms-auto small">AI</span>
+    </a>
+    <a href="{% url 'profile' %}"
+        class="sidebar-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+        <i class="fas fa-user-cog"></i> Profile Settings
+    </a>
+</div>

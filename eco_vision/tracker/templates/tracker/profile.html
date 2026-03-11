@@ -1,0 +1,83 @@
+{% extends 'tracker/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Profile Settings - EcoTrack Vision{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-lg-3 col-md-4 mb-4">
+            {% include 'tracker/includes/sidebar.html' %}
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9 col-md-8">
+            <div class="card p-4">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="icon-box bg-light-primary text-primary me-3">
+                        <i class="fas fa-user-cog fa-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="mb-0">Profile Settings</h4>
+                        <p class="small text-muted mb-0">Manage your account information and household details</p>
+                    </div>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control" value="{{ user.username }}" disabled>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-control" value="{{ user.email }}" placeholder="Enter email">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Household Size</label>
+                            <input type="number" class="form-control" value="{{ user.profile.household_size }}"
+                                placeholder="e.g. 4">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Location (Optional)</label>
+                            <input type="text" class="form-control" value="{{ user.profile.location|default:'' }}"
+                                placeholder="City, Country">
+                        </div>
+                    </div>
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-premium btn-lg">Update Profile</button>
+                    </div>
+                </form>
+
+                <hr class="my-5">
+
+                <div class="p-3 bg-light rounded-3 border-start border-4 border-danger">
+                    <h6 class="text-danger mb-2">Danger Zone</h6>
+                    <p class="small text-muted mb-3">Once you delete your account, there is no going back. Please be
+                        certain.</p>
+                    <button class="btn btn-outline-danger btn-sm">Delete Account</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-box {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .bg-light-primary {
+        background-color: rgba(9, 132, 227, 0.1);
+    }
+</style>
+{% endblock %}

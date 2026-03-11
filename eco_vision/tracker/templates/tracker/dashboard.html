@@ -1,0 +1,177 @@
+{% extends 'tracker/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - EcoTrack Vision{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-lg-3 col-md-4 mb-4">
+            {% include 'tracker/includes/sidebar.html' %}
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9 col-md-8">
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card p-4 text-center bg-white">
+                        <h4 class="mb-4">Your Sustainability Score</h4>
+                        <div class="eco-score-ring mb-3" style="--score: {{ eco_score|default:75 }}"
+                            data-score="{{ eco_score|default:75 }}"></div>
+                        <p class="text-muted">Weighted Score: 40% Plastic | 30% Water | 30% Energy</p>
+                        <div class="mt-2">
+                            <span class="badge bg-success px-3 py-2 rounded-pill">Good Performance</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 p-4 border-start border-4 border-success">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="text-uppercase text-muted small font-weight-bold">Plastic</h6>
+                            <i class="fas fa-recycle text-success fa-lg"></i>
+                        </div>
+                        <h3>{{ plastic_score }} Score</h3>
+                        <p class="small text-muted mb-0">Based on Object Count</p>
+                        <div class="progress mt-3" style="height: 6px;">
+                            <div class="progress-bar bg-success" role="progressbar"
+                                style="width: {{ plastic_score }}%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 p-4 border-start border-4 border-info">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="text-uppercase text-muted small font-weight-bold">Water</h6>
+                            <i class="fas fa-tint text-info fa-lg"></i>
+                        </div>
+                        <h3>{{ water_score }} Score</h3>
+                        <p class="small text-muted mb-0">Total Usage: {{ water_usage }} L</p>
+                        <div class="progress mt-3" style="height: 6px;">
+                            <div class="progress-bar bg-info" role="progressbar" style="width: {{ water_score }}%;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 p-4 border-start border-4 border-warning">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="text-uppercase text-muted small font-weight-bold">Electricity</h6>
+                            <i class="fas fa-bolt text-warning fa-lg"></i>
+                        </div>
+                        <h3>{{ electricity_score }} Score</h3>
+                        <p class="small text-muted mb-0">Total Usage: {{ electricity_usage }} kWh</p>
+                        <div class="progress mt-3" style="height: 6px;">
+                            <div class="progress-bar bg-warning" role="progressbar"
+                                style="width: {{ electricity_score }}%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-6 mb-4">
+                    <div class="card p-4 h-100 bg-gradient-primary text-white border-0 shadow-lg">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fas fa-robot fa-2x me-3 opacity-75"></i>
+                            <h5 class="mb-0 fw-bold">Water Forecast AI</h5>
+                        </div>
+                        <p class="small opacity-75 mb-4">Use our advanced ML model to predict your daily water needs
+                            based on household size, weather, and more.</p>
+                        <a href="{% url 'water_forecast' %}"
+                            class="btn btn-light btn-sm rounded-pill px-4 mt-auto align-self-start fw-bold text-primary">Try
+                            Forecast <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card p-4 h-100 bg-gradient-warning text-white border-0 shadow-lg">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fas fa-brain fa-2x me-3 opacity-75"></i>
+                            <h5 class="mb-0 fw-bold">Electricity AI</h5>
+                        </div>
+                        <p class="small opacity-75 mb-4">Predict your energy consumption. Our AI analyzes your
+                            appliances and lifestyle to give accurate estimates.</p>
+                        <a href="{% url 'electricity_forecast' %}"
+                            class="btn btn-light btn-sm rounded-pill px-4 mt-auto align-self-start fw-bold text-warning">Try
+                            Forecast <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="card p-4">
+                        <h5 class="mb-4">Recent Sustainability Tips</h5>
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item d-flex align-items-center px-0">
+                                <div class="icon-box-sm bg-light-success text-success me-3">
+                                    <i class="fas fa-lightbulb"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Switch to LEDs</h6>
+                                    <p class="small text-muted mb-0">LED bulbs use 75% less energy and last 25x longer.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="list-group-item d-flex align-items-center px-0">
+                                <div class="icon-box-sm bg-light-info text-info me-3">
+                                    <i class="fas fa-faucet-drip"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Fix Leaky Taps</h6>
+                                    <p class="small text-muted mb-0">A leaky faucet can waste up to 3,000 gallons of
+                                        water per year.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-box-sm {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+    }
+
+    .bg-light-success {
+        background-color: rgba(40, 167, 69, 0.1);
+    }
+
+    .bg-light-info {
+        background-color: rgba(23, 162, 184, 0.1);
+    }
+
+    .eco-score-ring {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        background: radial-gradient(closest-side, white 80%, transparent 0% 100%),
+            conic-gradient(var(--primary-color) calc(var(--score) * 1%), #e0e0e0 0);
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        box-shadow: 0 10px 25px rgba(0, 184, 148, 0.1);
+    }
+
+    .eco-score-ring::after {
+        content: attr(data-score);
+    }
+</style>
+{% endblock %}

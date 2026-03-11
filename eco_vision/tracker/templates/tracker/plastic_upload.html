@@ -1,0 +1,173 @@
+{% extends 'tracker/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Plastic Identification - EcoTrack Vision{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-lg-3 col-md-4 mb-4">
+            {% include 'tracker/includes/sidebar.html' %}
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9 col-md-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-sm fw-bold rounded-pill px-3">
+                    <i class="fas fa-arrow-left me-1"></i> Dashboard
+                </a>
+                <span class="badge bg-success p-2 px-3 fw-bold rounded-pill fs-6 shadow-sm">
+                    <i class="fas fa-recycle text-white me-1"></i> Plastic Score: {{ plastic_score }}
+                </span>
+            </div>
+
+            <div class="card p-4 shadow-sm border-0">
+                <div class="text-center mb-4">
+                    <div class="icon-box bg-light-success text-success mx-auto mb-3">
+                        <i class="fas fa-camera fa-2x"></i>
+                    </div>
+                    <h4>Plastic Identification</h4>
+                    <p class="text-muted">Upload an image of your plastic item for analysis.</p>
+                </div>
+
+                <form method="post" enctype="multipart/form-data" id="uploadForm">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="id_image"
+                            class="form-label d-block p-5 border-2 border-dashed rounded-4 text-center cursor-pointer hover-bg-light transition"
+                            id="drop-area">
+                            <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-muted"></i>
+                            <h6 class="mb-0">Click or drag image here</h6>
+                            <p class="small text-muted mb-0">Supports JPG, PNG (Max 5MB)</p>
+                            <input type="file" name="image" id="id_image" class="d-none" accept="image/*"
+                                onchange="previewImage(this)">
+                        </label>
+                        <div id="imagePreview" class="mt-3 text-center d-none">
+                            <img src="#" alt="Preview" class="img-fluid rounded-4 shadow-sm" style="max-height: 300px;">
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-premium btn-lg">
+                            <i class="fas fa-microchip me-2"></i>Analyze Item
+                        </button>
+                    </div>
+                </form>
+
+                {% if prediction_result %}
+                <div class="mt-5 p-4 bg-light rounded-4" id="result-box">
+                    {% if prediction_result.error %}
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>{{ prediction_result.error }}
+                    </div>
+                    {% else %}
+                    <h6 class="text-uppercase small font-weight-bold text-muted mb-3">Analysis Result</h6>
+                    <div class="row align-items-center mb-4">
+                        <div class="col-md-6 mb-3 mb-md-0 text-center">
+                            <p class="small text-muted mb-2">Original Image</p>
+                            <img src="{{ prediction_result.original_image_url }}" class="img-fluid rounded-3 border"
+                                style="max-height: 200px;">
+                        </div>
+                        <div class="col-md-6 text-center">
+                            <p class="small text-muted mb-2">Detection Result</p>
+                            <img src="{{ prediction_result.annotated_image_url }}"
+                                class="img-fluid rounded-3 border shadow-sm" style="max-height: 200px;">
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="flex-shrink-0">
+                            {% if prediction_result.is_recyclable %}
+                            <i class="fas fa-check-circle text-success fa-3x"></i>
+                            {% else %}
+                            <i class="fas fa-times-circle text-danger fa-3x"></i>
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h4 class="mb-0">{{ prediction_result.label }}</h4>
+                            <div class="mt-1">
+                                <span
+                                    class="badge bg-{{ prediction_result.status_class }}">{{prediction_result.status_label
+                                    }}</span>
+                                <span class="badge bg-primary ms-2">{{ prediction_result.object_count }}
+                                    Item(s)detected</span>
+                                <br>
+                                <span class="small text-muted">{{ prediction_result.confidence }}% Confidence</span>
+                                <span class="small text-muted ms-2">| Processed in {{
+                                    prediction_result.inference_time}}ms</span>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div
+                        class="p-3 bg-white rounded-3 border-start border-4 border-{{ prediction_result.status_class }} shadow-sm">
+                        <h6 class="text-uppercase small font-weight-bold text-muted mb-2">Analysis & Guidance</h6>
+                        <p class="mb-0"><strong>Status:</strong> {{ prediction_result.status_label }}</p>
+                        <p class="text-muted small mt-1 mb-0">{{ prediction_result.guidance }}</p>
+                    </div>
+
+                    {% if prediction_result.alternatives %}
+                    <h6>Eco-friendly Alternatives</h6>
+                    <ul class="small text-muted mb-0">
+                        {% for alt in prediction_result.alternatives %}
+                        <li>{{ alt }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .border-dashed {
+        border-style: dashed !important;
+        border-width: 2px !important;
+        border-color: #dee2e6 !important;
+    }
+
+    .icon-box {
+        width: 80px;
+        height: 80px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .bg-light-success {
+        background-color: rgba(40, 167, 69, 0.1);
+    }
+
+    .cursor-pointer {
+        cursor: pointer;
+    }
+
+    .hover-bg-light:hover {
+        background-color: #f8f9fa;
+        border-color: var(--primary-color) !important;
+    }
+
+    .transition {
+        transition: all 0.3s;
+    }
+</style>
+
+<script>
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('imagePreview').classList.remove('d-none');
+                document.getElementById('imagePreview').querySelector('img').src = e.target.result;
+                document.getElementById('drop-area').classList.add('d-none');
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+{% endblock %}
