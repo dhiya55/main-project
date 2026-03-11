@@ -1,0 +1,247 @@
+{% extends 'tracker/base.html' %}
+{% block title %}Electricity Forecast AI - EcoTrack Vision{% endblock %}
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-lg-3 col-md-4 mb-4">
+            {% include 'tracker/includes/sidebar.html' %}
+        </div>
+        <div class="col-lg-9 col-md-8">
+            <div class="row">
+                <div class="col-xl-5 col-lg-6 mb-4">
+                    <div class="card p-4">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="icon-box me-3" style="background:rgba(253,203,110,0.1)">
+                                <i class="fas fa-bolt text-warning fa-lg"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-0 fw-bold">Household Electricity AI</h5>
+                                <p class="small text-muted mb-0">Predict consumption based on profile</p>
+                            </div>
+                        </div>
+
+                        {% if error_msg %}
+                        <div class="alert alert-danger rounded-3 small">
+                            <i class="fas fa-circle-exclamation me-1"></i> {{ error_msg }}
+                        </div>
+                        {% endif %}
+
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="row g-3">
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label fw-semibold small">Household Size</label>
+                                    <select name="household_size" class="form-select rounded-3" required>
+										<option value="2" {% if form_data.household_size == '2' %}selected{% endif %}>Small (1–2 people)</option>
+										<option value="4" {% if form_data.household_size == '4' or not form_data.household_size %}selected{% endif %}>Medium (3–4 people)</option>
+										<option value="6" {% if form_data.household_size == '6' %}selected{% endif %}>Large (5–6 people)</option>
+									</select>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label fw-semibold small">Work from Home</label>
+                                    <input type="number" name="num_occupants_work_from_home"
+                                        class="form-control rounded-3" min="0" max="10"
+                                        value="{{ form_data.num_occupants_work_from_home|default:'0' }}" required>
+                                </div>
+
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label fw-semibold small">Property Type</label>
+                                    <select name="property_type" class="form-select rounded-3">
+                                        <option value="house" {% if form_data.is_house %}selected{% endif %}>House
+                                        </option>
+                                        <option value="apartment" {% if form_data.is_apartment %}selected{% endif %}>
+                                            Apartment</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label fw-semibold small">Income Level</label>
+                                    <select name="income_level" class="form-select rounded-3">
+                                        <option value="low" {% if form_data.is_low_income %}selected{% endif %}>Low
+                                        </option>
+                                        <option value="middle" {% if form_data.is_middle_income %}selected{% endif %}>
+                                            Middle</option>
+                                        <option value="high" {% if form_data.is_high_income %}selected{% endif %}>High
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label fw-semibold small">Dwelling Area (sqm)</label>
+                                    <input type="number" name="dwelling_area_sqm" class="form-control rounded-3"
+                                        min="20" max="1000" value="{{ form_data.dwelling_area_sqm|default:'100' }}"
+                                        required>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label fw-semibold small">Major Appliances</label>
+                                    <input type="number" name="num_major_appliances" class="form-control rounded-3"
+                                        min="1" max="30" value="{{ form_data.num_major_appliances|default:'5' }}"
+                                        required>
+                                </div>
+
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label fw-semibold small">Temperature (°C)</label>
+                                    <input type="number" name="temperature_c" class="form-control rounded-3" min="-20"
+                                        max="50" step="0.5" value="{{ form_data.temperature_c|default:'25' }}" required>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label fw-semibold small">Elec. Price ($/kWh)</label>
+                                    <input type="number" name="electricity_price_per_kwh" class="form-control rounded-3"
+                                        min="0" max="5" step="0.001"
+                                        value="{{ form_data.electricity_price_per_kwh|default:'0.15' }}" required>
+                                </div>
+
+                                <div class="col-12 mt-2">
+                                    <label class="form-label fw-semibold small d-block mb-3">Home Systems</label>
+                                    <div class="row text-center">
+                                        <div class="col-4">
+                                            <div
+                                                class="form-check form-switch p-0 d-flex flex-column align-items-center">
+                                                <i class="fas fa-snowflake mb-2 text-info"></i>
+                                                <label class="form-check-label small mb-2"
+                                                    for="has_air_conditioner">AC</label>
+                                                <input class="form-check-input ms-0" type="checkbox"
+                                                    name="has_air_conditioner" value="1" id="has_air_conditioner" {% if form_data.is_ac_on %}checked{% endif %}>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div
+                                                class="form-check form-switch p-0 d-flex flex-column align-items-center">
+                                                <i class="fas fa-fire mb-2 text-danger"></i>
+                                                <label class="form-check-label small mb-2"
+                                                    for="has_electric_heating">Heating</label>
+                                                <input class="form-check-input ms-0" type="checkbox"
+                                                    name="has_electric_heating" value="1" id="has_electric_heating" {% if form_data.is_heating_on %}checked{% endif %}>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div
+                                                class="form-check form-switch p-0 d-flex flex-column align-items-center">
+                                                <i class="fas fa-car mb-2 text-success"></i>
+                                                <label class="form-check-label small mb-2" for="has_ev">EV</label>
+                                                <input class="form-check-input ms-0" type="checkbox" name="has_ev"
+                                                    value="1" id="has_ev" {% if form_data.is_ev_on %}checked{% endif %}>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-grid mt-4">
+                                <button type="submit" class="btn btn-premium-elec btn-lg py-3">
+                                    <i class="fas fa-plug-circle-bolt me-2"></i>Generate Prediction
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-xl-7 col-lg-6">
+                    {% if prediction is not None %}
+                    <div
+                        class="card p-4 mb-4 border-start border-5 {% if prediction > 20 %}border-danger{% elif prediction > 12 %}border-warning{% else %}border-success{% endif %}">
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+                                <div
+                                    class="result-circle-elec {% if prediction > 20 %}danger{% elif prediction > 12 %}warning{% else %}success{% endif %}">
+                                    <span class="fw-bold">{{ prediction }}</span>
+                                    <small>kWh/day</small>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <h4 class="mb-1 fw-bold">Electricity Forecast</h4>
+                                <p class="text-muted mb-3">Daily consumption based on profile.</p>
+                                <div class="row g-2">
+                                    <div class="col-6 col-sm-4">
+                                        <div class="p-2 bg-light rounded-3 text-center">
+                                            <div class="small text-muted mb-1">Per Person</div>
+                                            <div class="fw-bold">
+                                                {% if prediction_per_person %}{{ prediction_per_person }} kWh
+                                                {% else %}-{% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-sm-4">
+                                        <div class="p-2 bg-light rounded-3 text-center">
+                                            <div class="small text-muted mb-1">Property</div>
+                                            <div class="fw-bold text-capitalize">{{ form_data.property_type }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-4">
+                                        <div class="p-2 bg-light rounded-3 text-center">
+                                            <div class="small text-muted mb-1">Weather</div>
+                                            <div class="fw-bold">{{ form_data.temperature_c }}°C</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="card p-5 mb-4 text-center border-dashed">
+                        <div class="mb-3"><i class="fas fa-bolt-lightning fa-3x text-light"></i></div>
+                        <h5 class="text-muted">Enter details to see the AI prediction</h5>
+                    </div>
+                    {% endif %}
+
+                    <div class="card p-4">
+                        <!--
+                        <h6 class="mb-4 fw-bold">Model Comparison</h6>
+                        <img src="{% url 'ml_graph' 'electricity' %}" class="img-fluid rounded-3" alt="Graph">
+						-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-box {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .result-circle-elec {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        color: white;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .result-circle-elec.success {
+        background: linear-gradient(135deg, #f1c40f, #f39c12);
+    }
+
+    .result-circle-elec.warning {
+        background: linear-gradient(135deg, #e67e22, #d35400);
+    }
+
+    .result-circle-elec.danger {
+        background: linear-gradient(135deg, #c0392b, #8e44ad);
+    }
+
+    .border-dashed {
+        border: 2px dashed #dee2e6;
+        background: #f8f9fa;
+        border-radius: 16px;
+    }
+
+    .btn-premium-elec {
+        background: linear-gradient(135deg, #f1c40f, #e67e22);
+        border: none;
+        color: white;
+        font-weight: 600;
+        border-radius: 12px;
+    }
+</style>
+{% endblock %}

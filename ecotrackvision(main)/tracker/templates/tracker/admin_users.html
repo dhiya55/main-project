@@ -1,0 +1,101 @@
+{% extends 'tracker/base.html' %}
+{% load static %}
+
+{% block title %}Member Directory - EcoTrack Vision{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-lg-3 col-md-4 mb-4">
+            {% include 'tracker/includes/sidebar.html' %}
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9 col-md-8">
+            <div class="card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h4 class="mb-1">Platform Member Directory</h4>
+                        <p class="text-muted small">Managing all registered accounts and their status.</p>
+                    </div>
+                    <div class="badge bg-primary px-3 py-2 rounded-pill">
+                        <i class="fas fa-user-check me-1"></i> Total: {{ users.count }}
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Joined Date</th>
+                                <th>User Info</th>
+                                <th>Username</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for u in users %}
+                            <tr>
+                                <td class="small">{{ u.date_joined|date:"M d, Y" }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm bg-light-primary text-primary rounded-circle me-3 d-flex align-items-center justify-content-center"
+                                            style="width: 40px; height: 40px;">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-dark">{{ u.get_full_name|default:"Unnamed User" }}
+                                            </div>
+                                            <div class="small text-muted">{{ u.email }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">{{ u.username }}</span>
+                                </td>
+                                <td>
+                                    {% if u.is_superuser %}
+                                    <span class="badge bg-gradient-success">Administrator</span>
+                                    {% else %}
+                                    <span class="badge bg-light text-muted border">Member</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if u.is_active %}
+                                    <span class="text-success small"><i class="fas fa-circle me-1"
+                                            style="font-size: 8px;"></i> Active</span>
+                                    {% else %}
+                                    <span class="text-danger small"><i class="fas fa-circle me-1"
+                                            style="font-size: 8px;"></i> Suspended</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center py-5">
+                                    <i class="fas fa-users-slash fa-3x text-light mb-3"></i>
+                                    <p class="text-muted">No users found in the system registry.</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-light-primary {
+        background-color: rgba(9, 132, 227, 0.1);
+    }
+
+    .badge.bg-gradient-success {
+        background: linear-gradient(135deg, #00b894, #00cec9) !important;
+        color: white;
+    }
+</style>
+{% endblock %}

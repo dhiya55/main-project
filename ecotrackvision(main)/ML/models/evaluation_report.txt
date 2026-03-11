@@ -1,0 +1,11 @@
+EcoTrack Vision - Extended Water Consumption Report
+Generated: 2026-02-24 15:14:22.913482
+==================================================
+Dataset: /Users/dhiya/Downloads/eco_vision/ML/household_water_consumption_extended.csv
+Best Model: Linear Regression
+Best R2: 0.9324
+
+Algorithm                   MAE       RMSE         R2
+Linear Regression         14.53      18.20     0.9324
+Random Forest             16.42      20.56     0.9138
+Gradient Boosting         14.93      18.68     0.9289

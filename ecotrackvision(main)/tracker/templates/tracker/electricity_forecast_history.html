@@ -1,0 +1,102 @@
+{% extends 'tracker/base.html' %}
+{% load static %}
+
+{% block title %}Electricity Forecast History - EcoTrack Vision{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-lg-3 col-md-4 mb-4">
+            {% include 'tracker/includes/sidebar.html' %}
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9 col-md-8">
+            <div class="card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h4 class="mb-1">Electricity Forecast History</h4>
+                        <p class="text-muted small">Viewing your historical AI predictions for daily electricity
+                            consumption.</p>
+                    </div>
+                    <a href="{% url 'electricity_forecast' %}" class="btn btn-premium btn-sm">
+                        <i class="fas fa-plus me-1"></i> New Forecast
+                    </a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Date Generated</th>
+                                {% if user.is_superuser %}<th>Member</th>{% endif %}
+                                <th>Daily Forecast (kWh)</th>
+                                <th>Monthly Est. (kWh)</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for forecast in forecasts %}
+                            <tr>
+                                <td class="small">{{ forecast.date|date:"F d, Y" }}</td>
+                                {% if user.is_superuser %}
+                                <td class="small">
+                                    <div class="fw-bold">{{ forecast.user.username }}</div>
+                                    <div class="text-muted" style="font-size: 10px;">{{ forecast.user.email }}</div>
+                                </td>
+                                {% endif %}
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-box-sm me-2 bg-light text-warning">
+                                            <i class="fas fa-bolt"></i>
+                                        </div>
+                                        <span class="fw-bold">{{ forecast.consumption_forecast|floatformat:2 }}
+                                            kWh</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="text-muted">{{ forecast.consumption_forecast|floatformat:1 }} × 30
+                                        =</span>
+                                    <span class="ms-1 fw-semibold text-warning">
+                                        {{ forecast.monthly_forecast|floatformat:1 }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if forecast.consumption_forecast > 20 %}
+                                    <span class="badge bg-danger">Heavy Load</span>
+                                    {% elif forecast.consumption_forecast > 12 %}
+                                    <span class="badge bg-warning text-dark">Balanced</span>
+                                    {% else %}
+                                    <span class="badge bg-success">Eco-Friendly</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-5 text-muted">
+                                    <i class="fas fa-plug-circle-bolt fa-3x mb-3 opacity-25"></i>
+                                    <p>No forecast history found. Try generating your first electricity prediction!</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-box-sm {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}

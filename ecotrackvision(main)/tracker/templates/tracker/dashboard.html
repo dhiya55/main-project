@@ -1,0 +1,283 @@
+{% extends 'tracker/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - EcoTrack Vision{% endblock %}
+
+{% block extra_js %}
+{% if is_admin %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('adminStatsChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Plastic Items', 'Water Analytics', 'Energy Analytics'],
+                datasets: [{
+                    label: 'Records Count',
+                    data: [{{ admin_stats.plastic }}, {{ admin_stats.water }}, {{ admin_stats.electricity }}],
+        backgroundColor: [
+        '#00b894',
+        '#0984e3',
+        '#f1c40f'
+    ],
+        borderRadius: 10,
+        barThickness: 50
+                }]
+            },
+        options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+            x: { grid: { display: false } }
+        }
+    }
+        });
+    });
+</script>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-lg-3 col-md-4 mb-4">
+            {% include 'tracker/includes/sidebar.html' %}
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9 col-md-8">
+            {% if is_admin %}
+            <!-- Admin Analytics Dashboard -->
+            <div class="row mb-5 animate__animated animate__fadeIn">
+                <div class="col-md-6 mb-4">
+                    <div class="card p-4 bg-gradient-primary text-white h-100 shadow-lg border-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-uppercase opacity-75 small fw-bold">Total Platform Users</h6>
+                                <h2 class="display-5 fw-bold mb-0 mt-2">{{ total_users }}</h2>
+                                <p class="mt-3 mb-0 small opacity-75"><i class="fas fa-users me-1"></i> Growing Eco
+                                    Community</p>
+                            </div>
+                            <div class="icon-circle bg-white bg-opacity-25"
+                                style="width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-user-group fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card p-4 bg-gradient-success text-white h-100 shadow-lg border-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-uppercase opacity-75 small fw-bold">Total Sustainability Checks</h6>
+                                <h2 class="display-5 fw-bold mb-0 mt-2">{{ total_analysis }}</h2>
+                                <p class="mt-3 mb-0 small opacity-75"><i class="fas fa-bolt-lightning me-1"></i>
+                                    Cumulative Impact</p>
+                            </div>
+                            <div class="icon-circle bg-white bg-opacity-25"
+                                style="width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-microscope fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-5">
+                <div class="col-md-12">
+                    <div class="card p-4 shadow-sm border-0 bg-white">
+                        <div class="d-flex align-items-center mb-4">
+                            <i class="fas fa-chart-bar text-primary me-2 fa-lg"></i>
+                            <h5 class="fw-bold mb-0">Global Activity Breakdown</h5>
+                        </div>
+                        <div style="position: relative; height:300px;">
+                            <canvas id="adminStatsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card p-4 text-center bg-white">
+                        <h4 class="mb-4">Your Sustainability Score</h4>
+                        <div class="eco-score-ring mb-3 {% if eco_score < 40 %}poor{% elif eco_score < 70 %}moderate{% else %}good{% endif %}"
+                            style="--score: {{ eco_score|default:0 }}" data-score="{{ eco_score|default:0 }}"></div>
+                        <p class="text-muted mb-1">{{ eco_meaning }}</p>
+                        <p class="small text-muted mb-3 opacity-75">Weighted Score: 40% Plastic | 30% Water | 30% Energy
+                        </p>
+                        <div>
+                            <span class="badge bg-{{ eco_class }} px-4 py-2 rounded-pill shadow-sm">
+                                <i
+                                    class="fas {% if eco_score < 40 %}fa-triangle-exclamation{% elif eco_score < 70 %}fa-circle-info{% else %}fa-circle-check{% endif %} me-1"></i>
+                                {{ eco_label }}
+                            </span>
+                        </div>
+                        <div class="mt-3">
+                            <a href="{% url 'recommendations' %}"
+                                class="btn btn-link text-decoration-none small fw-bold">
+                                View Recommendations <i class="fas fa-chevron-right ms-1 small"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 p-4 border-start border-4 border-success position-relative">
+                        {% if plastic_badge %}
+                        <div
+                            class="badge bg-success rounded-pill position-absolute top-0 end-0 m-3 shadow-sm animate__animated animate__bounceIn">
+                            <i class="fas fa-medal me-1"></i> Plastic Saver
+                        </div>
+                        {% endif %}
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="text-uppercase text-muted small font-weight-bold">Plastic</h6>
+                            <i class="fas fa-recycle text-success fa-lg"></i>
+                        </div>
+                        <h3>{{ plastic_score|default:0 }}%</h3>
+                        <p class="small text-muted mb-0">Recyclability Rate</p>
+                        <div class="progress mt-3" style="height: 6px;">
+                            <div class="progress-bar bg-success" role="progressbar"
+                                style="width: {{ plastic_score }}%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 p-4 border-start border-4 border-info position-relative">
+                        {% if water_badge %}
+                        <div
+                            class="badge bg-info rounded-pill position-absolute top-0 end-0 m-3 shadow-sm animate__animated animate__bounceIn">
+                            <i class="fas fa-medal me-1"></i> Water Saver
+                        </div>
+                        {% endif %}
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="text-uppercase text-muted small font-weight-bold">Water</h6>
+                            <i class="fas fa-tint text-info fa-lg"></i>
+                        </div>
+                        <h3>{{ water_usage|default:0 }}L</h3>
+                        <p class="small text-muted mb-0">Avg. Daily Consumption (< 300L)</p>
+                                <div class="progress mt-3" style="height: 6px;">
+                                    <div class="progress-bar bg-info" role="progressbar"
+                                        style="width: {{ water_score }}%;"></div>
+                                </div>
+                                <p class="small text-muted mt-2 mb-0">Efficiency: {{ water_score }}%</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 p-4 border-start border-4 border-warning position-relative">
+                        {% if energy_badge %}
+                        <div
+                            class="badge bg-warning text-dark rounded-pill position-absolute top-0 end-0 m-3 shadow-sm animate__animated animate__bounceIn">
+                            <i class="fas fa-medal me-1"></i> Energy Saver
+                        </div>
+                        {% endif %}
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="text-uppercase text-muted small font-weight-bold">Electricity</h6>
+                            <i class="fas fa-bolt text-warning fa-lg"></i>
+                        </div>
+                        <h3>{{ electricity_usage|default:0 }} kWh</h3>
+                        <p class="small text-muted mb-0">Daily Estimate (< 30kWh)</p>
+                                <div class="progress mt-3" style="height: 6px;">
+                                    <div class="progress-bar bg-warning" role="progressbar"
+                                        style="width: {{ elec_score }}%;">
+                                    </div>
+                                </div>
+                                <p class="small text-muted mt-2 mb-0">Efficiency: {{ elec_score }}%</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-6 mb-4">
+                    <div class="card p-4 h-100 bg-gradient-primary text-white border-0 shadow-lg">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fas fa-robot fa-2x me-3 opacity-75"></i>
+                            <h5 class="mb-0 fw-bold">Water Forecast AI</h5>
+                        </div>
+                        <p class="small opacity-75 mb-4">Use our advanced ML model to predict your daily water needs
+                            based on household size, weather, and more.</p>
+                        <a href="{% url 'water_forecast' %}"
+                            class="btn btn-light btn-sm rounded-pill px-4 mt-auto align-self-start fw-bold text-primary">Try
+                            Forecast <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card p-4 h-100 bg-gradient-warning text-white border-0 shadow-lg">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fas fa-brain fa-2x me-3 opacity-75"></i>
+                            <h5 class="mb-0 fw-bold">Electricity AI</h5>
+                        </div>
+                        <p class="small opacity-75 mb-4">Predict your energy consumption. Our AI analyzes your
+                            appliances and lifestyle to give accurate estimates.</p>
+                        <a href="{% url 'electricity_forecast' %}"
+                            class="btn btn-light btn-sm rounded-pill px-4 mt-auto align-self-start fw-bold text-warning">Try
+                            Forecast <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .icon-box-sm {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .bg-light-success {
+            background-color: rgba(40, 167, 69, 0.1);
+        }
+
+        .bg-light-info {
+            background-color: rgba(23, 162, 184, 0.1);
+        }
+
+        .eco-score-ring {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(closest-side, white 80%, transparent 0% 100%),
+                conic-gradient(var(--score-color, var(--primary-color)) calc(var(--score) * 1%), #e0e0e0 0);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--score-color, var(--primary-color));
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .eco-score-ring.poor {
+            --score-color: #dc3545;
+        }
+
+        .eco-score-ring.moderate {
+            --score-color: #ffc107;
+        }
+
+        .eco-score-ring.good {
+            --score-color: #28a745;
+        }
+
+        .eco-score-ring::after {
+            content: attr(data-score);
+        }
+    </style>
+    {% endblock %}

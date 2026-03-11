@@ -1,0 +1,108 @@
+{% extends 'tracker/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Water Tracker - EcoTrack Vision{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-lg-3 col-md-4 mb-4">
+            {% include 'tracker/includes/sidebar.html' %}
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9 col-md-8">
+            <div class="row">
+                <div class="col-lg-5 mb-4">
+                    <div class="card p-4">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="icon-box bg-light-info text-info me-3">
+                                <i class="fas fa-tint fa-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-0">Log Water Usage</h4>
+                                <p class="small text-muted mb-0">Track your daily consumption</p>
+                            </div>
+                        </div>
+
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label class="form-label">Consumption (Liters)</label>
+                                <input type="number" name="consumption" class="form-control form-control-lg rounded-3"
+                                    placeholder="e.g. 150">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Date</label>
+                                <input type="date" name="date" class="form-control form-control-lg rounded-3">
+                            </div>
+                            <div class="d-grid mt-4">
+                                <button type="submit" class="btn btn-premium btn-lg">Save Usage</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-lg-7">
+                    <div class="card p-4 h-100">
+                        <h5 class="mb-4">Weekly Consumption Trend</h5>
+                        <canvas id="waterChart" height="250"></canvas>
+
+                        <div class="mt-4 p-3 bg-light rounded-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-exclamation-triangle text-warning me-3"></i>
+                                <div>
+                                    <h6 class="mb-0">High Usage Alert</h6>
+                                    <p class="small text-muted mb-0">Your usage is 15% above the average for your
+                                        household size.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-box {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .bg-light-info {
+        background-color: rgba(23, 162, 184, 0.1);
+    }
+</style>
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('waterChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+                label: 'Water (L)',
+                data: [120, 150, 140, 180, 130, 210, 160],
+                borderColor: '#0984e3',
+                backgroundColor: 'rgba(9, 132, 227, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}
